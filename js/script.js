@@ -197,3 +197,52 @@ canvas.addEventListener("mousemove", (e) => {
   lastMouseX = e.clientX;
   lastMouseY = e.clientY;
 });
+// Biến cho cảm ứng
+let touchStartDist = 0;
+let initialZoom = zoom;
+let lastTouchX = 0;
+let lastTouchY = 0;
+
+// Hàm tính khoảng cách 2 ngón tay
+function getTouchDist(touches) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+canvas.addEventListener("touchstart", (e) => {
+  if (e.touches.length === 1) {
+    // 1 ngón: xoay
+    mouseDown = true;
+    lastTouchX = e.touches[0].clientX;
+    lastTouchY = e.touches[0].clientY;
+  } else if (e.touches.length === 2) {
+    // 2 ngón: zoom
+    touchStartDist = getTouchDist(e.touches);
+    initialZoom = zoom;
+  }
+});
+
+canvas.addEventListener("touchmove", (e) => {
+  e.preventDefault();
+
+  if (e.touches.length === 1 && mouseDown) {
+    // Xoay bằng 1 ngón tay
+    const dx = e.touches[0].clientX - lastTouchX;
+    const dy = e.touches[0].clientY - lastTouchY;
+    rotateY += dx * 0.005;
+    rotateX += dy * 0.005;
+    lastTouchX = e.touches[0].clientX;
+    lastTouchY = e.touches[0].clientY;
+  } else if (e.touches.length === 2) {
+    // Zoom bằng 2 ngón tay
+    const newDist = getTouchDist(e.touches);
+    const zoomFactor = newDist / touchStartDist;
+    zoom = initialZoom * zoomFactor;
+    zoom = Math.max(0.3, Math.min(2.5, zoom));
+  }
+}, { passive: false });
+
+canvas.addEventListener("touchend", () => {
+  mouseDown = false;
+});
