@@ -6,6 +6,7 @@ html, body {
   background-color: #000;
   color: #fff;
   font-family: sans-serif;
+  touch-action: pan-x pan-y;
 }
 
 canvas {
@@ -49,6 +50,7 @@ body.light #toggleBtn {
   z-index: 999;
   transition: all 0.3s ease;
 }
+
 .hidden {
   display: none;
 }
