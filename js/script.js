@@ -50,7 +50,6 @@ class Particle {
     let offsetX = (this.x - mouseX) * 0.0025;
     let offsetY = (this.y - mouseY) * 0.0025;
     ctx.translate(this.x + offsetX * this.size * 10, this.y + offsetY * this.size * 10);
-    ctx.rotate(this.angle);
 
     if (mode === "dark") {
       this.type === "a" ? drawStar(this.size) : drawHeart(this.size);
