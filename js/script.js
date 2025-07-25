@@ -2,10 +2,65 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 let width = canvas.width = window.innerWidth;
 let height = canvas.height = window.innerHeight;
-let mode = "dark"; // dark | light
+let mode = "dark";
 
 let mouseX = width / 2;
 let mouseY = height / 2;
+
+const floatingContainer = document.getElementById("floatingMessagesContainer");
+
+function createFloatingMessage(message, x, y) {
+  const div = document.createElement("div");
+  div.textContent = message;
+  div.style.position = "absolute";
+  div.style.left = `${x}px`;
+  div.style.top = `${y}px`;
+  div.style.color = "#fff";
+  div.style.fontSize = "18px";
+  div.style.pointerEvents = "none";
+  div.style.zIndex = "1000";
+  div.style.transition = "transform 3s ease-out, opacity 3s ease-out";
+  floatingContainer.appendChild(div);
+
+  setTimeout(() => {
+    div.style.transform = "translateY(-100px)";
+    div.style.opacity = "0";
+  }, 10);
+
+  setTimeout(() => {
+    floatingContainer.removeChild(div);
+  }, 3000);
+}
+
+const randomMessages = [
+  "Luôn rực rỡ như nắng hè! ☀️",
+  "Mãi là chính mình nhé! 💖",
+  "Thành công nhé bạn tôi! 🎉",
+  "Chúc mừng ngày đặc biệt! 🎓",
+  "Mọi điều tốt lành! 🌈",
+  "Tương lai rực sáng phía trước! ✨",
+  "Bạn làm được rồi! 💪",
+  "Gửi bạn nụ cười hôm nay 😄",
+  "Điều kỳ diệu đang chờ bạn! 🌻"
+];
+
+canvas.addEventListener("click", (e) => {
+  const clickX = e.clientX;
+  const clickY = e.clientY;
+  for (const item of loadedImages) {
+    const dx = item.x - clickX;
+    const dy = item.y - clickY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < item.size / 2) {
+      showMessage(item.message);
+      const randomMsg = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+      createFloatingMessage(randomMsg, clickX, clickY);
+      break;
+    }
+  }
+});
+
+// ===== Đoạn bổ sung để khôi phục toàn bộ hiệu ứng ảnh và hình vẽ =====
 
 document.addEventListener("mousemove", (e) => {
   mouseX = e.clientX;
@@ -161,20 +216,6 @@ function drawImages() {
   });
 }
 
-canvas.addEventListener("click", (e) => {
-  const clickX = e.clientX;
-  const clickY = e.clientY;
-  for (const item of loadedImages) {
-    const dx = item.x - clickX;
-    const dy = item.y - clickY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < item.size / 2) {
-      showMessage(item.message);
-      break;
-    }
-  }
-});
-
 function showMessage(msg) {
   const box = document.getElementById("messageBox");
   if (box) {
@@ -201,12 +242,6 @@ animate();
 
 const toggleBtn = document.getElementById("toggleBtn");
 toggleBtn.addEventListener("click", () => {
-  document.body.classList.toggle("light");
-  document.body.classList.toggle("dark");
-  mode = document.body.classList.contains("light") ? "light" : "dark";
-});
-
-document.body.addEventListener("click", () => {
   document.body.classList.toggle("light");
   document.body.classList.toggle("dark");
   mode = document.body.classList.contains("light") ? "light" : "dark";
